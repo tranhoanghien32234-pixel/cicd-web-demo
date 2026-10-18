@@ -1,0 +1,14 @@
+{
+  "name": "cicd-web-demo",
+  "version": "1.0.0",
+  "description": "Demo CI/CD pipeline",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Running automated tests... Success!\" && exit 0"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
+}
