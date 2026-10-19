@@ -1,0 +1,44 @@
+name: CI/CD Pipeline for Web App
+
+# Định nghĩa sự kiện kích hoạt quy trình tự động chạy
+on:
+  push:
+    branches: ["main"] # Chạy tự động mỗi khi bạn đẩy code mới lên nhánh main
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # Chạy trên máy chủ ảo hệ điều hành Ubuntu của GitHub
+
+    steps:
+      # 1. Tải mã nguồn từ GitHub xuống máy chủ ảo
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Cài đặt môi trường Node.js trên máy chủ ảo
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      # 3. Phần CI (Continuous Integration): Cài đặt thư viện và chạy kiểm thử tự động
+      - name: Install dependencies and Run Test
+        run: |
+          npm install
+          npm test
+
+      # 4. Đăng nhập vào Docker Hub sử dụng thông tin bảo mật đã lưu
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 5. Phần CD (Continuous Deployment): Đóng gói Docker Image và tự động đẩy lên Docker Hub
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/cicd-web-demo:latest
